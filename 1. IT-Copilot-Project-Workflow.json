@@ -1,0 +1,568 @@
+{
+  "name": "1. IT-Copilot-Project-Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "creat-ticket",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -608,
+        -704
+      ],
+      "id": "0056a598-5647-4aaf-abee-bf14cc29d204",
+      "name": "Webhook",
+      "webhookId": "09318c36-ccdc-4209-b7ef-f9b151f15408"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "062bd8b7-4a28-462b-9a99-9762492e4965",
+              "name": "Ticket ID",
+              "value": "={{ 'IT-' + Math.floor(10000 + Math.random() * 90000) }}",
+              "type": "string"
+            },
+            {
+              "id": "b80bf2e5-0fbf-44b4-866f-f0b2abc2d873",
+              "name": "Status",
+              "value": "Pending",
+              "type": "string"
+            },
+            {
+              "id": "e4df5af2-e369-4ece-853e-8f72bbb7f689",
+              "name": "Timestamp",
+              "value": "={{ $now.toFormat('yyyy-LL-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "e963ee58-14c4-4284-86c0-d567ede0348a",
+              "name": "Telegram ID",
+              "value": "={{ $json.body.telegramId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -704
+      ],
+      "id": "6fa3ec87-d632-4e41-ada6-8d5ecbabab65",
+      "name": "Ticket ID"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g",
+          "mode": "list",
+          "cachedResultName": "Reported Problems Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 622883050,
+          "mode": "list",
+          "cachedResultName": "n8n-Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g/edit#gid=622883050"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Name": "={{ $json.body.name }}",
+            "Issue Description": "={{ $json.body.description }}",
+            "Category": "={{ $json.body.category }}",
+            "Email": "={{ $json.body.email }}",
+            "Ticket ID": "={{ $json['Ticket ID'] }}",
+            "Status": "={{ $json.Status }}",
+            "Telegram ID": "={{ $json.body.telegramId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue Description",
+              "displayName": "Issue Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ticket ID",
+              "displayName": "Ticket ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        -704
+      ],
+      "id": "c85a350c-7833-4582-bce3-f887e7fe06cf",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MkL2dhVSjRsz4ezK",
+          "name": "Owais Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Ticket ID').first().json.body.email }}\n",
+        "subject": "=Your IT ticket {{ $('Ticket ID').first().json['Ticket ID'] }} has been created\n\n",
+        "message": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #dddddd; border-radius: 6px;\">\n    <div style=\"background-color: #0078d4; padding: 15px 20px; color: white; border-radius: 5px 5px 0 0;\">\n        <h2 style=\"margin: 0; font-size: 18px;\">Your IT Support Request Has Been Created</h2>\n    </div>\n    <div style=\"padding: 20px;\">\n        <p>Hi <strong>{{ $('Webhook').first().json.body.name }}</strong>,</p>\n        <p>We have successfully received your request. Here are the ticket details and relevant Knowledge Base articles:</p>\n        \n        <div style=\"background-color: #f7f7f7; padding: 15px; margin-bottom: 20px; border-radius: 4px; border-left: 3px solid #0078d4;\">\n            <p style=\"margin: 5px 0;\"><strong>Ticket ID:</strong> {{ $('Ticket ID').first().json['Ticket ID'] }}</p>\n            <p style=\"margin: 5px 0;\"><strong>Status:</strong> <span style=\"color: #28a745; font-weight: bold;\">{{ $('Ticket ID').first().json.Status }}</span></p>\n            <p style=\"margin: 5px 0;\"><strong>Issue Summary:</strong><br>{{ $('Webhook').first().json.body.description }}</p>\n        </div>\n        \n        <h3 style=\"font-size: 16px; border-bottom: 1px solid #eeeeee; padding-bottom: 5px;\">Knowledge Base Articles</h3>\n        <p>The following articles may resolve your issue immediately:</p>\n        \n        <div style=\"margin-bottom: 25px; border: 1px solid #cccccc; padding: 15px; background-color: #ffffff; font-family: inherit; font-size: 14px; white-space: normal;\">\n            {{ $('Build Final HTML').first().json.FINAL_HTML }}\n        </div>\n        \n        <p>If these instructions do not solve your issue, you can immediately **escalate** your ticket to the IT Support Team:</p>\n        \n        <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color: #dc3545; border-radius: 5px;\">\n            <tr>\n                <td align=\"center\" valign=\"middle\" height=\"40\" style=\"padding: 0 25px;\">\n                    <a href=\"https://n8n.srv1150016.hstgr.cloud/webhook/escalate-Jirav1?ticketId={{$('Ticket ID').first().json['Ticket ID']}}&issueDescription={{ encodeURIComponent($('Webhook').first().json.body.description) }}\" \n                        target=\"_blank\" \n                        style=\"color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px;\">\n                        ESCALATE ISSUE NOW\n                    </a>\n                </td>\n            </tr>\n        </table>\n        \n        <p style=\"margin-top: 25px;\">Thank you for reaching out to us.<br>\n        <strong>IT Support</strong></p>\n    </div>\n    \n    <div style=\"background-color: #f4f4f4; padding: 10px 20px; text-align: center; font-size: 11px; color: #777777; border-top: 1px solid #dddddd;\">\n        This is an automated notification. Please do not reply directly to this email unless escalating your issue.\n    </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1664,
+        -704
+      ],
+      "id": "adfe0516-f04f-4491-8547-78892b12bb6d",
+      "name": "Send a message",
+      "webhookId": "e65aabb3-5d17-4e7d-bd77-e7fb04a96aa3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0EsqvZq1NritkKth",
+          "name": "Owais Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "475a6161-2f93-4c01-bb3b-039172709948",
+              "name": "TicketId",
+              "value": "={{ $('Ticket ID').first().json['Ticket ID'] }}\n",
+              "type": "string"
+            },
+            {
+              "id": "94b60445-75d1-4892-8335-15e42c655b88",
+              "name": "Status",
+              "value": "={{ $('Ticket ID').first().json.Status }}\n",
+              "type": "string"
+            },
+            {
+              "id": "66bb3a6b-fa90-4a3a-9369-95efd2805a00",
+              "name": "succes",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2112,
+        -704
+      ],
+      "id": "f6ae1cc6-a6a5-4aca-8662-ac12101831c8",
+      "name": "Response",
+      "alwaysOutputData": false,
+      "notesInFlow": false,
+      "retryOnFail": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a36fc0f7-f7b9-4edd-8cc8-9c4bdd6ccc3e",
+              "name": "query",
+              "value": "={{ \"User is reporting the following IT Issue: \" + $json[\"Issue Description\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        -704
+      ],
+      "id": "8b75a1c5-dc64-4d0f-a980-43ce0f725661",
+      "name": "Prepare RAG Query"
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "it-copilot",
+          "mode": "list",
+          "cachedResultName": "it-copilot"
+        },
+        "prompt": "={{ $json.query }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        -704
+      ],
+      "id": "1aaeb646-5658-41e7-97ed-b1a1b141c120",
+      "name": "Search KB (Pinecone)",
+      "credentials": {
+        "pineconeApi": {
+          "id": "a6e0ZDM6Nb0wcURU",
+          "name": "PineconeApi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// The 'items' variable automatically holds the array of items from the previous node (Pinecone).\nconst docs = items.map(i => i.json);\n\n// Initialize variables and a Set to track unique file names (the source documents)\nlet finalResponseText = '';\nconst processedFileNames = new Set();\n\n// Handle the case where the RAG search found nothing\nif (!docs || docs.length === 0) {\n    return [{\n        json: {\n            RAG_FINAL_TEXT: 'We could not find a matching Knowledge Base article for your specific issue.'\n        }\n    }];\n}\n\n// Loop through each retrieved document\nfor (const doc of docs) {\n    // 1. IDENTIFY UNIQUE SOURCE FILE (for Deduplication)\n    const contentObject = doc.document;\n    // Note: Using `data.fileName` is common for Pinecone metadata, adjust as needed\n    const uniqueFileId = doc.metadata?.['file-name'] || 'Generic_Article'; \n    \n    // *** DEDUPLICATION CHECK ***\n    if (processedFileNames.has(uniqueFileId)) {\n        continue; // Skip this chunk, it's a duplicate.\n    }\n    processedFileNames.add(uniqueFileId); // Mark this unique document as processed\n    \n    // 2. RETRIEVE CONTENT\n    const rawContent = contentObject?.pageContent || ''; \n    \n    // 3. FORMATTING CHANGES (Convert to Markdown/Text structure)\n    let formattedContent = rawContent;\n    \n    // A. Apply Bolding to Section Headers using Markdown (**)\n    formattedContent = formattedContent.replace(/Title:/g, '**Title:**');\n    formattedContent = formattedContent.replace(/Overview:/g, '**Overview:**');\n    formattedContent = formattedContent.replace(/Step-by-Step Instructions:/g, '**Step-by-Step Instructions:**');\n    \n    // B. Convert Steps to Numbered List (1., 2., 3.)\n    const lines = formattedContent.split('\\n');\n    let numberedStepsContent = '';\n    let stepCounter = 1;\n\n    for (const line of lines) {\n        if (line.trim().startsWith('-')) {\n            // Remove leading hyphen and replace it with a numbered step\n            numberedStepsContent += line.trim().replace('-', `${stepCounter}. `) + '\\n';\n            stepCounter++;\n        } else {\n            // Keep non-step lines as they are\n            numberedStepsContent += line + '\\n';\n        }\n    }\n\n    // 4. BUILD FINAL OUTPUT (No Truncation)\n    // We are no longer truncating the content here.\n    finalResponseText += `\\n\\n${numberedStepsContent.trim()}`;\n} // <-- This is the correct closing brace for the 'for' loop\n\n// CRITICAL: Return only ONE item with the aggregated text\nreturn [{\n    json: {\n        RAG_FINAL_TEXT: finalResponseText\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -704
+      ],
+      "id": "e0733db4-6e14-42ab-b870-e08298b244d2",
+      "name": "Format Single Chunk"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        -480
+      ],
+      "id": "a9fed257-3795-4e9c-a91e-d2af789507e8",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "rET3mGIfC9lnYpbH",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A2QK1C80G",
+          "mode": "list",
+          "cachedResultName": "all-team-46-aiml"
+        },
+        "text": "=📩 New IT ticket created\n\nName: {{ $('Webhook').first().json.body.name }}\nEmail: {{ $('Webhook').first().json.body.email }}\nTicket ID: {{ $('Ticket ID').first().json['Ticket ID'] }}\nCategory: {{ $('Webhook').first().json.body.category }}\nIssue: {{ $('Webhook').first().json.body.description }}\n\nStatus: {{ $('Ticket ID').first().json.Status }}\n\n(You’re getting this DM because this ticket was opened with your email.)\n",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1888,
+        -704
+      ],
+      "id": "6f2b091d-96dd-4204-af91-f0f28237c60b",
+      "name": "Send a message1",
+      "webhookId": "55ebec75-389c-42fa-b006-5d9f556b74f4",
+      "credentials": {
+        "slackApi": {
+          "id": "nIy3bRfUdAMitYRM",
+          "name": "Owais Slack account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "\"You are an expert IT support agent. Your sole task is to rewrite the provided knowledge base article text. The output must be a single JSON object that contains two keys: title and instructions. Your rewrite must be friendly and preserve all technical steps. DO NOT output any text outside of the JSON object. And stay professional and no jokes\".\n\n Always respond with a single JSON object only:\n{ \"title\": \"<short professional title>\", \"instructions\": [\"<step 1>\", \"<step 2>\", \"...\"] }\ninstructions must be an array of strings. Do not send a single long string.\nNo extra text, no markdown, no explanation outside the JSON."
+            },
+            {
+              "content": "={{ $json.RAG_FINAL_TEXT }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -704
+      ],
+      "id": "8a8e677e-36c7-48a1-8301-a12c2df79bfa",
+      "name": "Fine-Tune RAG Answer",
+      "credentials": {
+        "openAiApi": {
+          "id": "rET3mGIfC9lnYpbH",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function node: Build Final HTML – robust handling of instructions\n\nlet aiOutputString;\n\ntry {\n  // Get the model output text from the previous AI node\n  aiOutputString = items[0].json.output[0].content[0].text;\n} catch (e) {\n  return [{\n    json: {\n      FINAL_HTML: '<i>Error: Failed to retrieve content from the AI node.</i>'\n    }\n  }];\n}\n\n// --- Clean and extract JSON string ---\n\nlet jsonCandidate = aiOutputString || \"\";\n\n// Remove markdown fences if present\njsonCandidate = jsonCandidate\n  .replace(/```json/i, \"\")\n  .replace(/```/g, \"\")\n  .trim();\n\n// Keep only from first \"{\" to last \"}\"\nconst start = jsonCandidate.indexOf(\"{\");\nconst end = jsonCandidate.lastIndexOf(\"}\");\n\nif (start !== -1 && end !== -1 && end > start) {\n  jsonCandidate = jsonCandidate.slice(start, end + 1);\n}\n\nlet parsedContent;\ntry {\n  parsedContent = JSON.parse(jsonCandidate);\n} catch (e) {\n  const safeRaw = aiOutputString.replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\n  return [{\n    json: {\n      FINAL_HTML: `<p><b>Knowledge Base Articles</b><br>Error: Could not parse AI response.</p><pre>${safeRaw}</pre>`\n    }\n  }];\n}\n\n// --- Build HTML ---\n\nconst title = parsedContent.title || \"Knowledge Base Article\";\n\n// Normalise instructions: handle array OR string\nlet instructionsRaw = parsedContent.instructions ?? [];\nlet instructions = [];\n\nif (Array.isArray(instructionsRaw)) {\n  instructions = instructionsRaw;\n} else if (typeof instructionsRaw === \"string\") {\n  // Split single string into lines, drop empty ones\n  instructions = instructionsRaw\n    .split(/\\r?\\n/)\n    .map(l => l.trim())\n    .filter(l => l.length > 0);\n} else {\n  instructions = [];\n}\n\nlet finalResponseText = `\n<b>Title:</b> ${title}<br><br>\n<b>Overview:</b><br>\nBelow are the steps to resolve your issue based on our internal knowledge base.<br><br>\n<b>Step-by-Step Instructions:</b><br>\n`;\n\nif (instructions.length === 0) {\n  // Fallback if AI returns no steps\n  finalResponseText += `No detailed steps were returned for this request. Please contact the IT Service Desk for further assistance.<br>`;\n} else {\n  // Render as a numbered HTML list\n  finalResponseText += `<ol>`;\n  instructions.forEach(step => {\n    finalResponseText += `<li>${step}</li>`;\n  });\n  finalResponseText += `</ol>`;\n}\n\n\nreturn [{\n  json: {\n    FINAL_HTML: finalResponseText\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        -704
+      ],
+      "id": "735a1f35-3430-4f8b-8346-0ac9a1affd9c",
+      "name": "Build Final HTML"
+    },
+    {
+      "parameters": {
+        "content": " # **This is the core workflow that runs when someone submitsthe IT support ticket from IT website.**\n\n## Webhook: This is the entry point from our front-end form ( Triggered when a user submit's an IT form on lovebale site )\n## Ticket ID: Enhances the incoming payload by adding: Ticket ID and Status\n## Append row in sheet: Writes a new row into a Google Sheet named “Reported Problems Database”, sheet “n8n-Project” ( Timestamp, Nane, Issue Description, Category, Email, TicketID, Status )\n## Prepare RAG Query: Builds a natural language field query, that query will be sent to the vector store.\n## Search KB (Pinecone): Retrieves the most relevant document chunks from your IT KB index in Pinecone.\n## Format Single Chunk: Custom Java Script that takes the list of retrieved documents from Pinecone, Deduplicates by file name metadata, extract the pageContent text, applies formatting, and Concatenated all formatted content into single text field: RAG_FINAL_TEXT\n## Fine-Tune RAG Answer: Sends RAG-FINAL-TEXT into OpenAI with a strict system prompt. Result: a clean, structured JSON with a friendly title and clear instructions.\n## Build Final HTML: Extracts the AI response JSON (title, instructions).Build user facing HTML and outputs a single field, ready to be inserted in the email.\n## Send a message (Gmail): Sends a nicely branded HTML email to the user. A “Knowledge Base Articles” section displaying the FINAL_HTML instructions.A big “ESCALATE ISSUE NOW” button. THe Escalt butto liks t Jira Wokflw.\n## Send a message1 (Slack): This keeps the IT team immediately informed when a new ticket is created.\n## Response: Prepares the HTTP response back to the front-end. Since the Webhook responseMode is lastNode, this is what the website receives",
+        "height": 1232,
+        "width": 3376,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -880,
+        -1344
+      ],
+      "typeVersion": 1,
+      "id": "811ba837-b2ba-44be-96b3-b4d1eb1c043e",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Ticket ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket ID": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Prepare RAG Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare RAG Query": {
+      "main": [
+        [
+          {
+            "node": "Search KB (Pinecone)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search KB (Pinecone)": {
+      "main": [
+        [
+          {
+            "node": "Format Single Chunk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Single Chunk": {
+      "main": [
+        [
+          {
+            "node": "Fine-Tune RAG Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search KB (Pinecone)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fine-Tune RAG Answer": {
+      "main": [
+        [
+          {
+            "node": "Build Final HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Final HTML": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89a4e096-7480-4391-baa7-b4c0267269ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e129aa47cfdedbc3ef45950863cc5662b27491a78461404143bbe07d1f197e20"
+  },
+  "id": "NYtnR3wDJNRMw1fp",
+  "tags": []
+}

@@ -1,0 +1,223 @@
+{
+  "name": "2. IT Copilot: Jira Escalation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "value": "10001",
+          "mode": "list",
+          "cachedResultName": "Support"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10007",
+          "mode": "list",
+          "cachedResultName": "Submit a request or incident"
+        },
+        "summary": "==Escalated - {{$node[\"Get row(s) in sheet1\"].json[\"Category\"]}} - Original ID: {{$node[\"Get row(s) in sheet1\"].json[\"Ticket ID\"]}}\n\n\n",
+        "additionalFields": {
+          "description": "==Escalated from IT Copilot.\n\nOriginal Ticket ID: {{$node[\"Get row(s) in sheet1\"].json[\"Ticket ID\"]}}\nUser Name: {{$node[\"Get row(s) in sheet1\"].json[\"Name\"]}}\nUser Email: {{$node[\"Get row(s) in sheet1\"].json[\"Email\"]}}\nCategory: {{$node[\"Get row(s) in sheet1\"].json[\"Category\"]}}\nCurrent Status: {{$node[\"Get row(s) in sheet1\"].json[\"Status\"]}}\n\nIssue Summary / User Description:\n{{$node[\"Get row(s) in sheet1\"].json[\"Issue Description\"]}}\n\nEscalation Source:\n- Triggered from email \"Escalate my issue\" button.\n- Handled by n8n IT Copilot automation.\n\n\n"
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ad1c50d8-caf6-4f9c-a2f7-a2144612468c",
+      "name": "Create an issue",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "zF4smz6Ot6Y0WKOe",
+          "name": "Owais Jira SW Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $node[\"Format Final Response\"].json[\"body\"] }}\n",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "=text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        976,
+        0
+      ],
+      "id": "a3e9c513-74bb-467a-8418-f7afad2f5759",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a09d2e80-0d47-4ad9-964e-753bfb21ba30",
+              "name": "body",
+              "value": "=<html>\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Issue Escalated</title>\n    <style>\n      body {\n        background-color: #f3f4f6;\n        font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\",\n          sans-serif;\n        margin: 0;\n        padding: 40px 16px;\n        color: #111827;\n      }\n\n      .card {\n        max-width: 560px;\n        margin: 0 auto;\n        background-color: #ffffff;\n        border-radius: 16px;\n        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.18);\n        overflow: hidden;\n      }\n\n      .card-header {\n        background: linear-gradient(135deg, #2563eb, #6366f1);\n        padding: 18px 24px;\n        color: #ffffff;\n      }\n\n      .card-header h1 {\n        margin: 0;\n        font-size: 22px;\n        font-weight: 700;\n      }\n\n      .card-header p {\n        margin: 4px 0 0;\n        font-size: 13px;\n        opacity: 0.9;\n      }\n\n      .card-body {\n        padding: 20px 24px 22px;\n      }\n\n      .badge {\n        display: inline-flex;\n        align-items: center;\n        padding: 2px 10px;\n        border-radius: 999px;\n        font-size: 11px;\n        font-weight: 600;\n        text-transform: uppercase;\n        letter-spacing: 0.04em;\n        background-color: #d1fae5;\n        color: #065f46;\n        margin-bottom: 10px;\n      }\n\n      table {\n        width: 100%;\n        border-collapse: collapse;\n        margin: 8px 0 16px;\n        font-size: 13px;\n      }\n\n      th,\n      td {\n        padding: 8px 6px;\n        text-align: left;\n      }\n\n      th {\n        width: 38%;\n        color: #6b7280;\n        font-weight: 600;\n        font-size: 12px;\n        text-transform: uppercase;\n        letter-spacing: 0.03em;\n      }\n\n      tr + tr td,\n      tr + tr th {\n        border-top: 1px solid #e5e7eb;\n      }\n\n      .note {\n        font-size: 12px;\n        color: #6b7280;\n        margin-top: 6px;\n      }\n\n      .footer {\n        padding: 12px 24px 18px;\n        border-top: 1px solid #e5e7eb;\n        background-color: #f9fafb;\n        font-size: 12px;\n        color: #6b7280;\n      }\n\n      .footer strong {\n        color: #111827;\n      }\n    </style>\n  </head>\n\n  <body>\n    <div class=\"card\">\n      <div class=\"card-header\">\n        <h1>Your issue has been escalated</h1>\n        <p>\n          Your request has been forwarded to the IT support queue in Jira. You\n          can safely close this tab.\n        </p>\n      </div>\n\n      <div class=\"card-body\">\n        <div class=\"badge\">Escalation created</div>\n\n        <table>\n          <tr>\n            <th>Original Ticket ID</th>\n            <td>{{ $node[\"Get row(s) in sheet1\"].json[\"Ticket ID\"] }}</td>\n          </tr>\n          <tr>\n            <th>Jira Issue</th>\n            <td>{{ $node[\"Create an issue\"].json[\"key\"] }}</td>\n          </tr>\n          <tr>\n            <th>Requester</th>\n            <td>{{ $node[\"Get row(s) in sheet1\"].json[\"Name\"] }}</td>\n          </tr>\n          <tr>\n            <th>Category</th>\n            <td>{{ $node[\"Get row(s) in sheet1\"].json[\"Category\"] }}</td>\n          </tr>\n          <tr>\n            <th>Issue Summary</th>\n            <td>{{ $node[\"Get row(s) in sheet1\"].json[\"Issue Description\"] }}</td>\n          </tr>\n        </table>\n\n        <p class=\"note\">\n          The IT team will review your Jira issue and contact you if they need\n          more information.\n        </p>\n      </div>\n\n      <div class=\"footer\">\n        <strong>Tip:</strong> You can reply to the original IT Copilot email if\n        you’d like to add screenshots or additional details later.\n      </div>\n    </div>\n  </body>\n</html>\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        0
+      ],
+      "id": "3ec58d7a-93a8-45a1-99b4-02001dc56806",
+      "name": "Format Final Response",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g",
+          "mode": "list",
+          "cachedResultName": "Reported Problems Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 622883050,
+          "mode": "list",
+          "cachedResultName": "n8n-Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TsMQFpnTi_fBZRDctW-KaFF7jeTU1M2XPeus7QwkN6g/edit#gid=622883050"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Ticket ID",
+              "lookupValue": "={{ $node[\"Webhook jira\"].json[\"query\"][\"ticketId\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5a022559-6a77-412c-9034-ca9c8dedff6f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MkL2dhVSjRsz4ezK",
+          "name": "Owais Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "escalate-Jirav1",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "html_response",
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0827b7a7-d328-46af-ac8b-70ab0ac450c3",
+      "name": "Webhook jira",
+      "webhookId": "6d08cd26-8f0b-47f2-8256-93ae2a0077da"
+    },
+    {
+      "parameters": {
+        "content": "# This workflow is triggered when the user clicks “ESCALATE ISSUE NOW” in the email.\n\n### Webhook jira: This is the URL embedded in the email button. IT accepts query parameters. \n### Get row(s) in sheet1: Looks into the same Google Sheet (Reported Problems Database, n8n-Project sheet) and filters by Ticket ID = query.ticketId. Retrieves the original ticket details (Name, Email, Category, Issue Description, etc.).\n### Create an issue (Jira): Uses the data from Get row(s) in sheet1 to create a Jira issue in the Support project with type “Submit a request or incident”.\n### Format Final Response: Builds a beautiful HTML page that says “Your issue has been escalated”.\n### Respond to Webhook: Returns the body HTML as an HTTP response with Content-Type: text/html. When the user clicks the button, their browser shows this confirmation card and tells them they can close the tab.",
+        "height": 592,
+        "width": 1872
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -432,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "f2739219-abae-4c24-8a56-2f621e0f12bc",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create an issue": {
+      "main": [
+        [
+          {
+            "node": "Format Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Create an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook jira": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e855adf0-a541-4207-866c-75595bad746b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e129aa47cfdedbc3ef45950863cc5662b27491a78461404143bbe07d1f197e20"
+  },
+  "id": "U2nsYUxh0dyQCmyE",
+  "tags": []
+}

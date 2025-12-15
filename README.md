@@ -25,3 +25,6 @@ If the user clicks “Escalate Issue” in the email, a second webhook is trigge
 n8n looks up the original ticket in Google Sheets and automatically creates a Jira issue with full context (ticket ID, user details, category, and description).
 
 The user sees a confirmation page, and the IT team continues managing the case directly in Jira.
+
+IT-COPILOT_PROJECT_VIDEO_LINK:
+https://github.com/n8ntestn8n01-prog/Team46-IT-Copilot/releases/download/IT-Copilot_PROJECT__VIDEO/IT.COPILOT.PROJECT.mp4
